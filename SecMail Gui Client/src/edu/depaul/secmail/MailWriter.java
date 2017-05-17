@@ -1,10 +1,3 @@
-/*
- * Copyright 2016. DePaul University. All rights reserved. 
- * This work is distributed pursuant to the Software License
- * for Community Contribution of Academic Work, dated Oct. 1, 2016.
- * For terms and conditions, please see the license file, which is
- * included in this distribution.
- */
 package edu.depaul.secmail;
 
 import java.io.File;
@@ -52,8 +45,7 @@ public class MailWriter extends Shell {
 	 * Launch the application.
 	 * @param args
 	 */
-	//Jacob Burkamper
-	public static void main(String args[]) {
+	 public static void main(String args[]) {
 		try {
 			Display display = Display.getDefault();
 			MailWriter shell = new MailWriter(display);
@@ -74,12 +66,11 @@ public class MailWriter extends Shell {
 	 * @param display
 	 * @wbp.parser.constructor
 	 */
-	//Jacob Burkamper
 	public MailWriter(Display display) {
 		super(display, SWT.SHELL_TRIM);
 		createContents();
 		this.setLayout(new FormLayout());
-		
+
 		Composite composite = new Composite(this, SWT.NONE);
 		FormData fd_composite = new FormData();
 		fd_composite.top = new FormAttachment(0);
@@ -87,23 +78,23 @@ public class MailWriter extends Shell {
 		fd_composite.left = new FormAttachment(0, 10);
 		composite.setLayoutData(fd_composite);
 		composite.setLayout(new GridLayout(2, false));
-		
+
 		Label lblTo = new Label(composite, SWT.NONE);
 		GridData gd_lblTo = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 		gd_lblTo.widthHint = 38;
 		lblTo.setLayoutData(gd_lblTo);
 		lblTo.setText("To:");
-		
+
 		toText = new Text(composite, SWT.BORDER);
 		toText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
+
 		Label lblSubject = new Label(composite, SWT.NONE);
 		lblSubject.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblSubject.setText("Subject:");
-		
+
 		subjectText = new Text(composite, SWT.BORDER);
 		subjectText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
+
 		Composite composite_1 = new Composite(this, SWT.NONE);
 		fd_composite.bottom = new FormAttachment(composite_1, 0);
 		composite_1.setLayout(new FormLayout());
@@ -112,7 +103,7 @@ public class MailWriter extends Shell {
 		fd_composite_1.left = new FormAttachment(composite, 0, SWT.LEFT);
 		fd_composite_1.right = new FormAttachment(100, -10);
 		composite_1.setLayoutData(fd_composite_1);
-		
+
 		Label lblMailBody = new Label(composite_1, SWT.NONE);
 		FormData fd_lblMailBody = new FormData();
 		fd_lblMailBody.right = new FormAttachment(100, 0);
@@ -120,7 +111,7 @@ public class MailWriter extends Shell {
 		fd_lblMailBody.top = new FormAttachment(0, 10);
 		lblMailBody.setLayoutData(fd_lblMailBody);
 		lblMailBody.setText("Mail Body:");
-		
+
 		bodyText = new Text(composite_1, SWT.BORDER | SWT.WRAP);
 		FormData fd_bodyText = new FormData();
 		fd_bodyText.top = new FormAttachment(lblMailBody, 6);
@@ -128,7 +119,7 @@ public class MailWriter extends Shell {
 		fd_bodyText.bottom = new FormAttachment(100, -89);
 		fd_bodyText.right = new FormAttachment(100, -10);
 		bodyText.setLayoutData(fd_bodyText);
-		
+
 		tblAttachments = new Table(composite_1, SWT.BORDER | SWT.FULL_SELECTION);
 		tblAttachments.setEnabled(false);
 		FormData fd_tblAttachments = new FormData();
@@ -139,19 +130,19 @@ public class MailWriter extends Shell {
 		tblAttachments.setLayoutData(fd_tblAttachments);
 		tblAttachments.setHeaderVisible(true);
 		tblAttachments.setLinesVisible(true);
-		
+
 		TableColumn tblclmnFilename = new TableColumn(tblAttachments, SWT.NONE);
 		tblclmnFilename.setWidth(315);
 		tblclmnFilename.setText("FileName");
-		
+
 		TableColumn tblclmnSize = new TableColumn(tblAttachments, SWT.NONE);
 		tblclmnSize.setWidth(184);
 		tblclmnSize.setText("Size");
 		FormData fd_btnAddAttachment = new FormData();
 		fd_btnAddAttachment.left = new FormAttachment(0, 10);
 		fd_btnAddAttachment.bottom = new FormAttachment(100, -10);
-		
-		
+
+
 		Button btnAddAttachment = new Button(this, SWT.NONE);
 		btnAddAttachment.setEnabled(false);
 		btnAddAttachment.addSelectionListener(new SelectionAdapter() {
@@ -169,8 +160,8 @@ public class MailWriter extends Shell {
 		fd_composite_1.bottom = new FormAttachment(btnAddAttachment, -6);
 		btnAddAttachment.setLayoutData(fd_btnAddAttachment);
 		btnAddAttachment.setText("Add Attachment");
-		
-		
+
+
 		Button btnCancel = new Button(this, SWT.NONE);
 		btnCancel.addMouseListener(new MouseAdapter() {
 			@Override
@@ -183,12 +174,11 @@ public class MailWriter extends Shell {
 		fd_btnCancel.right = new FormAttachment(100, -10);
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.setText("Cancel");
-		
+
 		Button btnSend = new Button(this, SWT.NONE);
 		btnSend.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				// Josh Clark
 				loadToEmailStruct();
 				if (!promptAndEncryptEmail())
 					return; // user pressed cancel on password dialog. Don't send email.
@@ -206,16 +196,16 @@ public class MailWriter extends Shell {
 		fd_btnSend.right = new FormAttachment(btnCancel, -6);
 		btnSend.setLayoutData(fd_btnSend);
 		btnSend.setText("Send");
-		
+
 		Menu menu = new Menu(this, SWT.BAR);
 		this.setMenuBar(menu);
-		
+
 		MenuItem mntmFile = new MenuItem(menu, SWT.CASCADE);
 		mntmFile.setText("File");
-		
+
 		Menu menu_1 = new Menu(mntmFile);
 		mntmFile.setMenu(menu_1);
-		
+
 		MenuItem mntmOpenDraft = new MenuItem(menu_1, SWT.NONE);
 		mntmOpenDraft.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -245,7 +235,7 @@ public class MailWriter extends Shell {
 			}
 		});
 		mntmOpenDraft.setText("Open Draft");
-		
+
 		MenuItem mntmSaveAsDraft = new MenuItem(menu_1, SWT.NONE);
 		mntmSaveAsDraft.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -265,7 +255,7 @@ public class MailWriter extends Shell {
 			}
 		});
 		mntmSaveAsDraft.setText("Save As Draft");
-		
+
 		MenuItem mntmSaveAsEncrypted = new MenuItem(menu_1, SWT.NONE);
 		mntmSaveAsEncrypted.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -285,7 +275,7 @@ public class MailWriter extends Shell {
 					}
 					else
 						System.out.println("user cancelled draft save");
-					
+
 				}
 				else
 				{
@@ -294,19 +284,17 @@ public class MailWriter extends Shell {
 			}
 		});
 		mntmSaveAsEncrypted.setText("Save As Encrypted Draft");
-		
+
 		MenuItem mntmClose = new MenuItem(menu_1, SWT.NONE);
 		mntmClose.setText("Close");
 	}
-	
-	//Jacob Burkamper
+
 	MailWriter(Display d, DHEncryptionIO serverIO)
 	{
 		this(d);
 		this.io = serverIO;
 	}
-	
-	//Jacob Burkamper
+
 	//constructor for creating the window with default values
 	MailWriter(Display d, String to, String subject, String body, DHEncryptionIO serverIO)
 	{
@@ -320,7 +308,6 @@ public class MailWriter extends Shell {
 	/**
 	 * Create contents of the shell.
 	 */
-	//Jacob Burkamper
 	protected void createContents() {
 		setText("New Mail");
 		setSize(566, 503);
@@ -331,8 +318,7 @@ public class MailWriter extends Shell {
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
-	
-	//Jacob Burkamper
+
 	private void loadToEmailStruct()
 	{
 		if (email == null)
@@ -342,18 +328,17 @@ public class MailWriter extends Shell {
 		String[] recipients = toText.getText().split(",");
 		for (String recipient : recipients)
 			email.addRecipient(recipient.trim());
-		
+
 		email.setSubject(subjectText.getText());
 		email.setBody(bodyText.getText());
-		
+
 		for (TableItem i : tblAttachments.getItems())
 		{
 			File f = (File)i.getData();
 			email.addAttachment(f);
 		}
 	}
-	
-	//Jacob Burkamper
+
 	private void updateFields()
 	{
 		if (email != null)
@@ -361,7 +346,7 @@ public class MailWriter extends Shell {
 			toText.setText(email.getToString());
 			bodyText.setText(email.getBody());
 			subjectText.setText(email.getSubject());
-			
+
 			LinkedList<File> attachments = email.getAttachmentList();
 			if (attachments != null)
 				for (File f : attachments)
@@ -370,9 +355,7 @@ public class MailWriter extends Shell {
 				}
 		}
 	}
-	
-	
-	// Josh Clark
+
 	private String writeEmailtoServer()
 	{
 		String returnString;
@@ -381,21 +364,19 @@ public class MailWriter extends Shell {
 			//create the appropriate packet
 			PacketHeader emailPacketHeader = new PacketHeader();
 			emailPacketHeader.setCommand(Command.SEND_EMAIL);
-			
+
 			//send the packet
 			io.writeObject(emailPacketHeader);
 			//io.flush();
 			io.writeObject(email);
-			
-			//Jacob Burkamper
+
 			if (email.hasAttachments())
 				sendAttachments();
 			else
 			{
 				io.writeObject(new PacketHeader(Command.END_EMAIL));
 			}
-			// end Jacob Burkamper
-			
+
 			//get the response
 			PacketHeader responsePacket = (PacketHeader)io.readObject();
 
@@ -403,42 +384,41 @@ public class MailWriter extends Shell {
 				returnString = "Response Packet contained non-success command";
 			else
 				returnString = "Successfully sent email to server!";
-			
+
 		} catch (Exception e)
 		{
 			returnString = "Exception thrown while trying to send email.\n" + e;
 		}
 		return returnString;
 	}
-	
-	//Jacob Burkamper
+
 	//send the attachments from the email to the server.
 	private void sendAttachments() throws IOException
 	{
 		System.out.println("Sending Attachments!"); // TODO: Delete debug code
 		final int ARRAY_SIZE = 1000; // size of array to send
-		
+
 		io.writeObject(new PacketHeader(Command.START_ATTACHMENTS));
 		LinkedList<File> attachments = email.getAttachmentList();
 		for (File f : attachments)
 		{
 			PacketHeader ph = new PacketHeader(Command.SEND_ATTACHMENT);
-			
+
 			//calculate the number of byte arrays we will need
 			long fSize = f.length();
 			long numArrays = fSize / ARRAY_SIZE;
 			if (fSize % ARRAY_SIZE > 0)
 				numArrays++;
-			
+
 			//add the number of byte arrays to the packetheader
 			ph.setLength(numArrays);
-			
+
 			//add the original name of the file to packetheader
 			ph.setString(f.getName());
-			
+
 			//send the packet header over the network
 			io.writeObject(ph);
-			
+
 			//begin sending the file
 			FileInputStream fis = new FileInputStream(f);
 			byte[] bArr = new byte[ARRAY_SIZE];
@@ -457,8 +437,7 @@ public class MailWriter extends Shell {
 		// we've sent all the attachments.
 		io.writeObject(new PacketHeader(Command.END_ATTACHMENTS));
 	}
-	
-	// Josh Clark
+
 	private boolean checkValidEmailInput(EmailStruct myEmail){
 		if(subjectText.getText().isEmpty() || toText.getText().isEmpty()){
 			return false;
@@ -467,8 +446,7 @@ public class MailWriter extends Shell {
 			return true;
 		}
 	}
-	
-	// Josh Clark
+
 	private void showEmailInputFailureMessage()
 	{
 		Shell invalid = new Shell();
@@ -483,12 +461,11 @@ public class MailWriter extends Shell {
 		else {
 			messageBox.setMessage("Please provide at least one recipient and a subject line.");
 		}
-		
-		
+
+
 		messageBox.open();
 	}
-	
-	//Jacob Burkamper
+
 	//Prompts the user about whether they want to encrypt the email or not.
 	// If yes, will ask for a password and encrypt the email using that password.
 	// if no, does nothing else.
@@ -510,7 +487,7 @@ public class MailWriter extends Shell {
 		}
 		return true;
 	}
-	
+
 	//http://stackoverflow.com/questions/3263892/format-file-size-as-mb-gb-etc
 	public static String readableFileSize(long size) {
 	    if(size <= 0) return "0";
@@ -519,7 +496,6 @@ public class MailWriter extends Shell {
 	    return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 	}
 	
-	//Jacob Burkamper
 	//creates a TableItem with the File and adds it to the attachment table.
 	private void createAttachmentItem(File f)
 	{

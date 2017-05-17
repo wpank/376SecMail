@@ -1,10 +1,3 @@
-/*
- * Copyright 2016. DePaul University. All rights reserved. 
- * This work is distributed pursuant to the Software License
- * for Community Contribution of Academic Work, dated Oct. 1, 2016.
- * For terms and conditions, please see the license file, which is
- * included in this distribution.
- */
 package edu.depaul.secmail;
 
 import java.io.File;
@@ -46,7 +39,6 @@ public class EmailReader extends Shell {
 	 * Launch the application.
 	 * @param args
 	 */
-	//Jacob Burkamper
 	public static void main(String args[]) {
 		try {
 			Display display = Display.getDefault();
@@ -68,18 +60,17 @@ public class EmailReader extends Shell {
 	 * @param display
 	 * @wbp.parser.constructor
 	 */
-	//Jacob Burkamper
 	public EmailReader(Display display) {
 		super(display, SWT.SHELL_TRIM);
 		setLayout(new FormLayout());
-		
+
 		Label lblTo = new Label(this, SWT.NONE);
 		FormData fd_lblTo = new FormData();
 		fd_lblTo.left = new FormAttachment(0, 10);
 		fd_lblTo.top = new FormAttachment(0, 7);
 		lblTo.setLayoutData(fd_lblTo);
 		lblTo.setText("To:");
-		
+
 		Label lblFrom = new Label(this, SWT.NONE);
 		FormData fd_lblFrom = new FormData();
 		fd_lblFrom.top = new FormAttachment(lblTo, 10);
@@ -87,7 +78,7 @@ public class EmailReader extends Shell {
 		fd_lblFrom.right = new FormAttachment(0, 65);
 		lblFrom.setLayoutData(fd_lblFrom);
 		lblFrom.setText("From:");
-		
+
 		Label lblDate = new Label(this, SWT.NONE);
 		FormData fd_lblDate = new FormData();
 		fd_lblDate.top = new FormAttachment(lblFrom, 10);
@@ -95,7 +86,7 @@ public class EmailReader extends Shell {
 		fd_lblDate.right = new FormAttachment(0, 65);
 		lblDate.setLayoutData(fd_lblDate);
 		lblDate.setText("Date:");
-		
+
 		Label lblSubject = new Label(this, SWT.NONE);
 		FormData fd_lblSubject = new FormData();
 		fd_lblSubject.top = new FormAttachment(lblDate, 10);
@@ -103,7 +94,7 @@ public class EmailReader extends Shell {
 		fd_lblSubject.right = new FormAttachment(0, 65);
 		lblSubject.setLayoutData(fd_lblSubject);
 		lblSubject.setText("Subject:");
-		
+
 		Label lblAttachments = new Label(this, SWT.NONE);
 		FormData fd_lblAttachments = new FormData();
 		fd_lblAttachments.right = new FormAttachment(0, 90);
@@ -111,7 +102,7 @@ public class EmailReader extends Shell {
 		fd_lblAttachments.left = new FormAttachment(0, 10);
 		lblAttachments.setLayoutData(fd_lblAttachments);
 		lblAttachments.setText("Attachments:");
-		
+
 		txtTo = new Text(this, SWT.BORDER);
 		fd_lblTo.right = new FormAttachment(0,63);
 		FormData fd_txtTo = new FormData();
@@ -120,7 +111,7 @@ public class EmailReader extends Shell {
 		fd_txtTo.top = new FormAttachment(lblTo, -3, SWT.TOP);
 		txtTo.setLayoutData(fd_txtTo);
 		txtTo.setEditable(false);
-		
+
 		txtFrom = new Text(this, SWT.BORDER);
 		FormData fd_txtFrom = new FormData();
 		fd_txtFrom.left = new FormAttachment(lblFrom, 4);
@@ -128,7 +119,7 @@ public class EmailReader extends Shell {
 		fd_txtFrom.top = new FormAttachment(lblFrom, -3, SWT.TOP);
 		txtFrom.setLayoutData(fd_txtFrom);
 		txtFrom.setEditable(false);
-		
+
 		txtDate = new Text(this, SWT.BORDER);
 		FormData fd_txtDate = new FormData();
 		fd_txtDate.right = new FormAttachment(100, -10);
@@ -136,7 +127,7 @@ public class EmailReader extends Shell {
 		fd_txtDate.top = new FormAttachment(txtFrom, 3);
 		txtDate.setLayoutData(fd_txtDate);
 		txtDate.setEditable(false);
-		
+
 		txtSubject = new Text(this, SWT.BORDER);
 		FormData fd_txtSubject = new FormData();
 		fd_txtSubject.left = new FormAttachment(lblSubject, 59, SWT.LEFT);
@@ -145,7 +136,7 @@ public class EmailReader extends Shell {
 		fd_txtSubject.top = new FormAttachment(txtDate, 3);
 		txtSubject.setLayoutData(fd_txtSubject);
 		txtSubject.setEditable(false);
-		
+
 		tblAttachments = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
 		FormData fd_tblAttachments = new FormData();
 		fd_tblAttachments.right = new FormAttachment(txtTo, 0, SWT.RIGHT);
@@ -163,15 +154,15 @@ public class EmailReader extends Shell {
 		});
 		tblAttachments.setHeaderVisible(true);
 		tblAttachments.setLinesVisible(true);
-		
+
 		TableColumn tblclmnFileName = new TableColumn(tblAttachments, SWT.NONE);
 		tblclmnFileName.setWidth(513);
 		tblclmnFileName.setText("File Name");
-		
+
 		TableColumn tblclmnFileSize = new TableColumn(tblAttachments, SWT.NONE);
 		tblclmnFileSize.setWidth(100);
 		tblclmnFileSize.setText("File Size");
-		
+
 		Label lblBody = new Label(this, SWT.NONE);
 		FormData fd_lblBody = new FormData();
 		fd_lblBody.right = new FormAttachment(0, 65);
@@ -179,7 +170,7 @@ public class EmailReader extends Shell {
 		fd_lblBody.left = new FormAttachment(0, 10);
 		lblBody.setLayoutData(fd_lblBody);
 		lblBody.setText("Body:");
-		
+
 		stxtBody = new StyledText(this, SWT.BORDER);
 		FormData fd_stxtBody = new FormData();
 		fd_stxtBody.top = new FormAttachment(lblBody, 6);
@@ -187,7 +178,7 @@ public class EmailReader extends Shell {
 		fd_stxtBody.left = new FormAttachment(0, 10);
 		stxtBody.setLayoutData(fd_stxtBody);
 		stxtBody.setEditable(false);
-		
+
 		Button btnClose = new Button(this, SWT.NONE);
 		fd_stxtBody.bottom = new FormAttachment(btnClose, -6);
 		FormData fd_btnClose = new FormData();
@@ -202,7 +193,7 @@ public class EmailReader extends Shell {
 			}
 		});
 		btnClose.setText("Close");
-		
+
 		Button btnReply = new Button(this, SWT.NONE);
 		FormData fd_btnReply = new FormData();
 		fd_btnReply.top = new FormAttachment(stxtBody, 9);
@@ -212,7 +203,7 @@ public class EmailReader extends Shell {
 		btnReply.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				MailWriter newMail = new MailWriter( Display.getCurrent(), 
+				MailWriter newMail = new MailWriter( Display.getCurrent(),
 							txtFrom.getText(),
 							"Re: " + txtSubject.getText(),
 							stxtBody.getText(),
@@ -222,7 +213,7 @@ public class EmailReader extends Shell {
 			}
 		});
 		btnReply.setText("Reply");
-		
+
 		Button btnReplyall = new Button(this, SWT.NONE);
 		FormData fd_btnReplyall = new FormData();
 		fd_btnReplyall.top = new FormAttachment(btnReply, 0, SWT.TOP);
@@ -231,7 +222,7 @@ public class EmailReader extends Shell {
 		btnReplyall.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				MailWriter newMail = new MailWriter( Display.getCurrent(), 
+				MailWriter newMail = new MailWriter( Display.getCurrent(),
 						txtTo.getText() + "," + txtFrom.getText(),
 						"Re: " + txtSubject.getText(),
 						stxtBody.getText(),
@@ -241,7 +232,7 @@ public class EmailReader extends Shell {
 			}
 		});
 		btnReplyall.setText("Reply-All");
-		
+
 		Button btnForward = new Button(this, SWT.NONE);
 		fd_btnReplyall.right = new FormAttachment(btnForward, -6);
 		FormData fd_btnForward = new FormData();
@@ -252,7 +243,7 @@ public class EmailReader extends Shell {
 		btnForward.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				MailWriter newMail = new MailWriter( Display.getCurrent(), 
+				MailWriter newMail = new MailWriter( Display.getCurrent(),
 						null,
 						"Fwd: " + txtSubject.getText(),
 						stxtBody.getText(),
@@ -264,14 +255,14 @@ public class EmailReader extends Shell {
 		btnForward.setText("Forward");
 		createContents();
 	}
-	
+
 	//Jacob Burkamper
 	EmailReader(Display d, DHEncryptionIO serverIO)
 	{
 		this(d);
 		this.io = serverIO;
 	}
-	
+
 	//Jacob Burkamper
 	EmailReader(Display d, EmailStruct email, UserStruct from, Date emailDate, DHEncryptionIO serverIO)
 	{
@@ -280,7 +271,7 @@ public class EmailReader extends Shell {
 		txtFrom.setText(from.compile());
 		txtDate.setText(DateFormat.getDateTimeInstance().format(emailDate));
 		txtSubject.setText(email.getSubject());
-		
+
 		//handle the attachments
 		LinkedList<File> attachments = email.getAttachmentList();
 		if(attachments != null){
@@ -290,15 +281,15 @@ public class EmailReader extends Shell {
 				t.setData(f);
 				t.setText(0, f.getName()); // filename
 				t.setText(1, String.valueOf(f.length()));
-			}		
+			}
 		}
-		
+
 		this.email = email;
 	}
-	
+
 	//Jacob Burkamper
 	@Override
-	public void open() 
+	public void open()
 	{
 		boolean encryptSuccess = true;
 			if (email.isEncrypted())
@@ -320,13 +311,12 @@ public class EmailReader extends Shell {
 				}
 			}
 		if (encryptSuccess) stxtBody.setText(email.getBody());
-		super.open();		
+		super.open();
 	}
 
 	/**
 	 * Create contents of the shell.
 	 */
-	//Jacob Burkamper
 	protected void createContents() {
 		setText("EmailReader");
 		setSize(661, 560);
@@ -338,7 +328,6 @@ public class EmailReader extends Shell {
 		// Disable the check that prevents subclassing of SWT components
 	}
 	
-	//Jacob Burkamper
 	private void handleAttachment(File f)
 	{
 		//TODO: Handle the attachment.

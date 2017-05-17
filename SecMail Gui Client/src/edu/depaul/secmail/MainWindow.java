@@ -1,10 +1,3 @@
-/*
- * Copyright 2016. DePaul University. All rights reserved. 
- * This work is distributed pursuant to the Software License
- * for Community Contribution of Academic Work, dated Oct. 1, 2016.
- * For terms and conditions, please see the license file, which is
- * included in this distribution.
- */
 package edu.depaul.secmail;
 
 import org.eclipse.swt.widgets.Display;
@@ -41,7 +34,6 @@ public class MainWindow {
 	 * Launch the application.
 	 * @param args
 	 */
-	//Jacob Burkamper
 	public static void main(String[] args) {
 		try {
 			File mailDirFile = new File(mailDir);
@@ -51,8 +43,8 @@ public class MainWindow {
 				System.exit(10);
 			}
 			MainWindow window = new MainWindow();
-			window.open();	
-			
+			window.open();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -61,23 +53,22 @@ public class MainWindow {
 	/**
 	 * Open the window.
 	 */
-	//Jacob Burkamper
 	public void open() {
 		Display display = Display.getDefault();
 		createContents();
-				
+
 		shlSecmail.open();
 		shlSecmail.layout();
-		
+
 		//get login info
 		LoginDialog login = new LoginDialog(shlSecmail, SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
 		LoginDialog.Status result = login.open();
-		
+
 		if (result != LoginDialog.Status.LOGIN_SUCCESS) // we exited or the login failed
 			shlSecmail.close();
-		
+
 		serverIO = login.getServerConnection();
-		
+
 		while (!shlSecmail.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -88,7 +79,6 @@ public class MainWindow {
 	/**
 	 * Create contents of the window.
 	 */
-	//Jacob Burkamper
 	protected void createContents() {
 		shlSecmail = new Shell(SHELL_TRIM & (~SWT.RESIZE));
 		shlSecmail.addShellListener(new ShellAdapter() {
@@ -108,7 +98,7 @@ public class MainWindow {
 		shlSecmail.setSize(466, 378);
 		shlSecmail.setText("SecMail");
 		shlSecmail.setLayout(new FormLayout());
-		
+
 		Composite composite = new Composite(shlSecmail, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
 		FormData fd_composite = new FormData();
@@ -117,7 +107,7 @@ public class MainWindow {
 		fd_composite.left = new FormAttachment(0, 155);
 		fd_composite.bottom = new FormAttachment(0, 299);
 		composite.setLayoutData(fd_composite);
-		
+
 		Button btnNewEmail = new Button(composite, SWT.NONE);
 		btnNewEmail.addMouseListener(new MouseAdapter() {
 			@Override
@@ -130,7 +120,7 @@ public class MainWindow {
 		gd_btnNewEmail.widthHint = 133;
 		btnNewEmail.setLayoutData(gd_btnNewEmail);
 		btnNewEmail.setText("New Email");
-		
+
 		Button btnFetchMail = new Button(composite, SWT.NONE);
 		btnFetchMail.addMouseListener(new MouseAdapter() {
 			@Override
@@ -143,7 +133,7 @@ public class MainWindow {
 		gd_btnFetchMail.widthHint = 131;
 		btnFetchMail.setLayoutData(gd_btnFetchMail);
 		btnFetchMail.setText("Fetch Mail");
-		
+
 		Button btnTestConnection = new Button(composite, SWT.NONE);
 		btnTestConnection.addMouseListener(new MouseAdapter() {
 			@Override
@@ -161,7 +151,7 @@ public class MainWindow {
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
-		
+
 		Button btnClose = new Button(composite, SWT.NONE);
 		btnClose.addMouseListener(new MouseAdapter() {
 			@Override
@@ -175,7 +165,6 @@ public class MainWindow {
 		btnClose.setText("Close");
 
 	}
-	//Jacob Burkamper
 	public static String getMailDir()
 	{
 		return mailDir;

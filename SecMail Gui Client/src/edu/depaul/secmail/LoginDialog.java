@@ -1,10 +1,3 @@
-/*
- * Copyright 2016. DePaul University. All rights reserved. 
- * This work is distributed pursuant to the Software License
- * for Community Contribution of Academic Work, dated Oct. 1, 2016.
- * For terms and conditions, please see the license file, which is
- * included in this distribution.
- */
 package edu.depaul.secmail;
 
 import java.io.IOException;
@@ -40,7 +33,6 @@ public class LoginDialog extends Dialog {
 	 * @param parent
 	 * @param style
 	 */
-	//Jacob Burkamper
 	public LoginDialog(Shell parent, int style) {
 		super(parent, style);
 		setText("Login");
@@ -50,7 +42,6 @@ public class LoginDialog extends Dialog {
 	 * Open the dialog.
 	 * @return the result
 	 */
-	//Jacob Burkamper
 	public Status open() {
 		createContents();
 		shell.open();
@@ -67,27 +58,26 @@ public class LoginDialog extends Dialog {
 	/**
 	 * Create contents of the dialog.
 	 */
-	//Jacob Burkamper
 	private void createContents() {
 		shell = new Shell(getParent(), getStyle());
 		shell.setSize(450, 300);
 		shell.setText(getText());
-		
+
 		txtUsername = new Text(shell, SWT.BORDER);
 		txtUsername.setBounds(88, 38, 311, 21);
-		
+
 		Label label = new Label(shell, SWT.NONE);
 		label.setText("Username:");
 		label.setBounds(27, 38, 55, 15);
-		
+
 		Label label_1 = new Label(shell, SWT.NONE);
 		label_1.setText("Password:");
 		label_1.setBounds(27, 78, 55, 15);
-		
+
 		txtPassword = new Text(shell, SWT.BORDER);
 		txtPassword.setEchoChar('*');
 		txtPassword.setBounds(88, 78, 311, 21);
-		
+
 		Button button = new Button(shell, SWT.NONE);
 		button.addMouseListener(new MouseAdapter() {
 			@Override
@@ -98,7 +88,7 @@ public class LoginDialog extends Dialog {
 		});
 		button.setText("Exit");
 		button.setBounds(235, 160, 75, 25);
-		
+
 		Button button_1 = new Button(shell, SWT.NONE);
 		button_1.addMouseListener(new MouseAdapter() {
 			@Override
@@ -116,7 +106,7 @@ public class LoginDialog extends Dialog {
 		button_1.setBounds(134, 160, 75, 25);
 
 	}
-	
+
 	private void doLogin()
 	{
 		UserStruct user = new UserStruct(txtUsername.getText());
@@ -129,13 +119,13 @@ public class LoginDialog extends Dialog {
 			//make the connection
 			Socket s = new Socket(user.getDomain(), user.getPort());
 			serverConnection = new DHEncryptionIO(s, false);
-			
+
 			//do the actual login
 			PacketHeader loginPacket = new PacketHeader(Command.LOGIN);
 			serverConnection.writeObject(loginPacket);
 			serverConnection.writeObject(user.getUser());
 			serverConnection.writeObject(txtPassword.getText());
-			
+
 			//get the response
 			PacketHeader responsePacket = (PacketHeader)serverConnection.readObject();
 			Command responseCommand = responsePacket.getCommand();
@@ -144,7 +134,7 @@ public class LoginDialog extends Dialog {
 			else if (responseCommand == Command.LOGIN_FAIL)
 			{
 				returnStatus = Status.LOGIN_FAIL;
-				
+
 				//close the connection to the server
 				serverConnection.writeObject(new PacketHeader(Command.CLOSE)); // be polite, tell the server we're closing
 				serverConnection.close();
@@ -169,8 +159,7 @@ public class LoginDialog extends Dialog {
 			System.out.println(e);
 		}
 	}
-	
-	//Jacob Burkamper
+
 	private void outputUserFormatError(String format)
 	{
 		MessageBox messageBox = new MessageBox(shell, SWT.OK);
@@ -179,8 +168,7 @@ public class LoginDialog extends Dialog {
 		messageBox.open();
 		returnStatus = Status.LOGIN_FAIL;
 	}
-	
-	//Jacob Burkamper
+
 	private void showLoginFailureMessage()
 	{
 		MessageBox messageBox = new MessageBox(shell, SWT.OK);
@@ -188,8 +176,7 @@ public class LoginDialog extends Dialog {
 		messageBox.setMessage("Username or password incorrect");
 		messageBox.open();
 	}
-	
-	//Jacob Burkamper
+
 	public DHEncryptionIO getServerConnection()
 	{
 		return serverConnection;

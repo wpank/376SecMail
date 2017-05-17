@@ -1,5 +1,5 @@
 /*
- * Copyright 2016. DePaul University. All rights reserved. 
+ * Copyright 2016. DePaul University. All rights reserved.
  * This work is distributed pursuant to the Software License
  * for Community Contribution of Academic Work, dated Oct. 1, 2016.
  * For terms and conditions, please see the license file, which is
@@ -34,7 +34,6 @@ public class PasswordDialog extends Dialog {
 	 * @param parent
 	 * @param style
 	 */
-	//Jacob Burkamper
 	public PasswordDialog(Shell parent, int style) {
 		super(parent, style);
 		setText("SWT Dialog");
@@ -45,7 +44,6 @@ public class PasswordDialog extends Dialog {
 	 * Open the dialog.
 	 * @return the result
 	 */
-	//Jacob Burkamper
 	public boolean open() {
 		shlPassword.open();
 		shlPassword.layout();
@@ -61,13 +59,12 @@ public class PasswordDialog extends Dialog {
 	/**
 	 * Create contents of the dialog.
 	 */
-	//Jacob Burkamper
 	private void createContents() {
 		shlPassword = new Shell(getParent(), getStyle());
 		shlPassword.setSize(531, 126);
 		shlPassword.setText("Password");
 		shlPassword.setLayout(new FormLayout());
-		
+
 		lblText = new Label(shlPassword, SWT.NONE);
 		lblText.setAlignment(SWT.CENTER);
 		FormData fd_lblText = new FormData();
@@ -76,7 +73,7 @@ public class PasswordDialog extends Dialog {
 		fd_lblText.right = new FormAttachment(100,-10);
 		lblText.setLayoutData(fd_lblText);
 		lblText.setText("Text");
-		
+
 		text = new Text(shlPassword, SWT.BORDER);
 		FormData fd_text = new FormData();
 		fd_text.right = new FormAttachment(lblText, 0, SWT.RIGHT);
@@ -84,7 +81,7 @@ public class PasswordDialog extends Dialog {
 		fd_text.left = new FormAttachment(0, 10);
 		text.setLayoutData(fd_text);
 		text.setEchoChar('*');
-		
+
 		Button btnCancel = new Button(shlPassword, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -98,7 +95,7 @@ public class PasswordDialog extends Dialog {
 		fd_btnCancel.right = new FormAttachment(lblText, 0, SWT.RIGHT);
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.setText("Cancel");
-		
+
 		Button btnOk = new Button(shlPassword, SWT.NONE);
 		btnOk.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -115,26 +112,22 @@ public class PasswordDialog extends Dialog {
 		btnOk.setText("Ok");
 
 	}
-	
-	//Jacob Burkamper
+
 	public void setTitle(String titleText)
 	{
 		setText(titleText);
 	}
-	
-	//Jacob Burkamper
+
 	public void setMessage(String message)
 	{
 		lblText.setText(message);
 	}
-	
-	//Jacob Burkamper
+
 	public boolean returnOK()
 	{
 		return exit_ok;
 	}
 	
-	//Jacob Burkamper
 	public String getText()
 	{
 		return pass;
