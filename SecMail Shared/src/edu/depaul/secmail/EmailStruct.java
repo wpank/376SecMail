@@ -1,10 +1,3 @@
-/*
- * Copyright 2016. DePaul University. All rights reserved. 
- * This work is distributed pursuant to the Software License
- * for Community Contribution of Academic Work, dated Oct. 1, 2016.
- * For terms and conditions, please see the license file, which is
- * included in this distribution.
- */
 package edu.depaul.secmail;
 
 import java.util.Arrays;
@@ -36,16 +29,16 @@ public class EmailStruct implements Serializable{
 	private boolean encrypted = false;
 	private transient FileInputStream fis;
 	private transient FileOutputStream fos;
-	
+
 	//default empty constructor.
 	EmailStruct()
 	{
-		
+
 	}
-	
+
 	//Constructor for reading an email from a file.
 	EmailStruct(File f)
-	{		
+	{
 		try {
 			fis = new FileInputStream(f);
 			String line = null;
@@ -96,7 +89,7 @@ public class EmailStruct implements Serializable{
 				else if (line.startsWith("Encrypted:"))
 				{
 					encrypted = true;
-					
+
 					//consume the rest of the file
 					ByteArrayOutputStream bos = new ByteArrayOutputStream();
 					int nextByte;
@@ -115,21 +108,21 @@ public class EmailStruct implements Serializable{
 			System.out.println(e);
 		}
 	}
-	
+
 	//reads the email from file f, and sets the id to ID
 	EmailStruct(File f, String ID)
 	{
 		this(f);
 		this.id = ID;
-	}	
-	
+	}
+
 	//helper function. Simply writes an error message to stdout.
 	private void fileFormatError(String line)
 	{
 		System.out.println("Format error reading email from file. offending line:");
 		System.out.println(line);
 	}
-	
+
 	//add the user denoted by the string to the recipients list
 	//creates the appropriate UserStruct from the incoming string first.
 	public void addRecipient(String to)
@@ -137,7 +130,7 @@ public class EmailStruct implements Serializable{
 		System.out.println("Added to:" + to);
 		recipients.add(new UserStruct(to));
 	}
-	
+
 	//Add the File attachment to the list of attachments for this email
 	public void addAttachment(File attachment)
 	{
@@ -145,19 +138,19 @@ public class EmailStruct implements Serializable{
 			attachments = new LinkedList<File>();
 		attachments.add(attachment);
 	}
-	
+
 	//set the subject of the email
 	public void setSubject(String subject)
 	{
 		this.subject = subject;
 	}
-	
+
 	//set the body of the email
 	public void setBody(String body)
 	{
 		this.body = body;
 	}
-	
+
 	//Generates a single string with comma separated entries for each user in the recipients list
 	public String getToString()
 	{
@@ -167,25 +160,25 @@ public class EmailStruct implements Serializable{
 		buffer.setLength(buffer.length() - 1); // delete the last character
 		return buffer.toString();
 	}
-	
+
 	//returns the list of attachments for this email
 	public LinkedList<File> getAttachmentList()
 	{
 		return attachments;
 	}
-	
+
 	//returns the subject of the email
 	public String getSubject()
 	{
 		return subject;
 	}
-	
+
 	//returns the body of the email
 	public String getBody()
 	{
 		return body;
 	}
-	
+
 	//writes the contents of this email message to a file f
 	//returns true if successful, returns false otherwise
 	public boolean writeToFile(File f)
@@ -198,7 +191,7 @@ public class EmailStruct implements Serializable{
 				custom_write("to: ");
 				custom_writeLine(recipient.compile());
 			}
-			
+
 			//write the attachments
 			if (attachments != null)
 				for (File attachment : attachments)
@@ -206,11 +199,11 @@ public class EmailStruct implements Serializable{
 					custom_write("attachment: ");
 					custom_writeLine(attachment.getAbsolutePath());
 				}
-			
+
 			//write the subject
 			custom_write("subject: ");
 			custom_writeLine(subject);
-			
+
 			//the rest of the email is the body.
 			if (encrypted)
 			{
@@ -218,12 +211,12 @@ public class EmailStruct implements Serializable{
 				fos.write(encryptedBytes);
 			}
 			else
-			{	
+			{
 				custom_writeLine("body: ");
 				custom_write(body);
 			}
-				
-			
+
+
 			fos.close();
 			return true;
 		} catch (Exception e)
@@ -231,10 +224,10 @@ public class EmailStruct implements Serializable{
 			System.out.println(e);
 			return false;
 		}
-			
+
 	}
-	
-	//get the unique ID for this email. Generates the ID if the email doesn't already have one.
+
+	// get the unique ID for this email. Generates the ID if the email doesn't already have one.
 	public String getID()
 	{
 		if (this.id == null)
@@ -242,22 +235,22 @@ public class EmailStruct implements Serializable{
 			//generate a random id string
 			this.id = new BigInteger(130, new SecureRandom()).toString(32);
 		}
-		
+
 		return id;
 	}
-	
-	// WP: Sets id to the id from the database
+
+	// Sets id to the id from the database
 	public void setID(String messageID){
 		this.id = messageID;
 	}
-	
-	//return the entire list of recipients
+
+	// return the entire list of recipients
 	public LinkedList<UserStruct> getToList()
 	{
 		return recipients;
 	}
-	
-	//returns a list of notifications of type NEW_EMAIL appropriate for this email
+
+	// returns a list of notifications of type NEW_EMAIL appropriate for this email
 	public LinkedList<Notification> getNotificationList(UserStruct fromUser)
 	{
 		LinkedList<Notification> ret = new LinkedList<Notification>();
@@ -267,8 +260,8 @@ public class EmailStruct implements Serializable{
 		}
 		return ret;
 	}
-	
-	//encrypts the body of this EmailStruct
+
+	// encrypts the body of this EmailStruct
 	public void encrypt(String pass)
 	{
 		try {
@@ -293,9 +286,9 @@ public class EmailStruct implements Serializable{
 			e.printStackTrace();
 		}
 	}
-	
-	//decrypts an already-encrypted body
-	//returns true if successful or false if not
+
+	// decrypts an already-encrypted body
+	// returns true if successful or false if not
 	public boolean decrypt(String pass)
 	{
 		try {
@@ -325,12 +318,12 @@ public class EmailStruct implements Serializable{
 		}
 		return false;
 	}
-	
+
 	public boolean isEncrypted()
 	{
 		return encrypted;
 	}
-	
+
 	//returns whether the email has attachments in the attachment list
 	public boolean hasAttachments()
 	{
@@ -338,7 +331,7 @@ public class EmailStruct implements Serializable{
 			return false;
 		else return !attachments.isEmpty();
 	}
-	
+
 	//custom method to read a line of characters from the input file.
 	//returns null on EOF or exception
 	private String custom_readLine()
@@ -351,21 +344,21 @@ public class EmailStruct implements Serializable{
 	        {
 	          if (nextByte == -1) //if EOF
 	            break;
-	
+
 	          sb.append((char)nextByte);
 	        }
-		} catch (IOException e) 
+		} catch (IOException e)
 		{
 			//e.printStackTrace();
 			sb.setLength(0);
 		}
-		
+
 		if (sb.length() == 0)
 			return null;
 		else
 			return sb.toString();
 	}
-	
+
 	private void custom_writeLine(String toWrite)
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -378,7 +371,7 @@ public class EmailStruct implements Serializable{
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void custom_write(String toWrite)
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -391,11 +384,11 @@ public class EmailStruct implements Serializable{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public byte[] getEncryptedBytes() {
 		return encryptedBytes;
 	}
-	
+
 	public void setEncryptedBytes(byte[] b) {
 		encryptedBytes = b;
 		this.encrypted = true;

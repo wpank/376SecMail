@@ -1,21 +1,4 @@
-/*
- * Copyright 2016. DePaul University. All rights reserved. 
- * This work is distributed pursuant to the Software License
- * for Community Contribution of Academic Work, dated Oct. 1, 2016.
- * For terms and conditions, please see the license file, which is
- * included in this distribution.
- */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.depaul.secmail;
-
-/**
- *
- * @author DJ, Juan Sierra
- */
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -37,10 +20,7 @@ public class Auth {
     private static final int newLine = 10;
     private static File file = new File("users.bin");
     private static FileInputStream fromFile;
-
-/********************** DOUG ***********************************************/
-
-     private static String getHashedPassword(String passwordToHash, byte[] salt)
+    private static String getHashedPassword(String passwordToHash, byte[] salt)
     {
         String generatedPassword = null;
         try {
@@ -68,8 +48,6 @@ public class Auth {
         sr.nextBytes(salt);
         return salt;
     }
-
-/******************* Juan Sierra ****************************************/
 
     //Create an account if user does not have an account
     public static void createAccount(String username, String password)
