@@ -1,5 +1,3 @@
-// Alan Strimbu
-
 package edu.depaul.secmail.models;
 
 import java.math.BigInteger;
@@ -18,7 +16,7 @@ public class User implements DBModel {
 	private String userAddress;
 	private String userPassword;
 	private String userSalt;
-	
+
 	// Constructor for instantiating User object from the DB, where it already has a userID
 	public User(int userID, String userAddress, String userPassword){
 		this.userID = userID;
@@ -30,7 +28,7 @@ public class User implements DBModel {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// Constructor for creating a user object to write to the DB
 	public User(String userAddress, String userPassword){
 		this.userAddress = userAddress;
@@ -42,7 +40,7 @@ public class User implements DBModel {
 		}
 		hashPassword();
 	}
-	
+
 	public User(String user) {
 		this.userAddress = user;
 		this.userPassword = null;
@@ -81,32 +79,32 @@ public class User implements DBModel {
 
 	@Override
 	public void dbWrite() {
-		
-		// Only write to the database if the user isn't already stored in it 
+
+		// Only write to the database if the user isn't already stored in it
 		if (userID == 0){
-			
+
 			String sql = "INSERT INTO user VALUES (0,  \""+userAddress + "\", \"" + userPassword + "\", \"" + userSalt + "\")";
-			
+
 			java.sql.Connection conn = null;
 			PreparedStatement stmt = null;
-			
+
 			try{
 				// Open a Connection
 				System.out.println("Connecting to database...");
 				conn = DBCon.getRemoteConnection();
-				
-				// Execute query 
+
+				// Execute query
 				System.out.println("Creating statement...");
 				stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 				stmt.executeUpdate();
 				ResultSet rs = stmt.getGeneratedKeys();
-				
+
 				// set userID from newly inserted row
 				if (rs.next()){
 					System.out.println("Insert User Success");
 					userID = rs.getInt(1);
 				}
-				
+
 				// Clean up connection
 				stmt.close();
 				conn.close();
@@ -129,49 +127,49 @@ public class User implements DBModel {
 			}
 		}
 	}
-	
+
 	// returns a User object from a userID
 	public static User getUserFromID(int userID){
 		String sql = "SELECT * FROM user where user_id = " + userID;
 		return getUserFromSQLStatement(sql);
 	}
-	
+
 	// returns a User object froma userAdress
 	// userAddress guarenteed to be unique, enforced by the db
 	public static User getUserFromAddress(String userAddress){
 		String sql = "SELECT * FROM user where user_address = \"" + userAddress + "\"";
 		return getUserFromSQLStatement(sql);
 	}
-	
+
 	// returns a UserStruct from a userID
 	public static UserStruct getUserStructFromID(int userID){
 		return getUserFromID(userID).toUserStruct();
 	}
-	
+
 	// returns a UserStruct from a userAddress
 	public static UserStruct getUserStructFromAddress(String userAddress){
 		return getUserFromAddress(userAddress).toUserStruct();
 	}
-	
+
 	public static User getUserFromSQLStatement(String sql){
 		Connection conn = null;
 		Statement stmt = null;
 		User user = null;
-		
+
 		try{
 			// Register JDBC Driver
 			Class.forName("com.mysql.jdbc.Driver");
-			
+
 			// Open a connection
 			System.out.println("Connecting to database.....");
 			conn = DBCon.getRemoteConnection();
-			
-			// EXECUTE A QUERY 
+
+			// EXECUTE A QUERY
 			System.out.println("Creating a statement");
 			stmt = conn.createStatement();
-	
+
 			ResultSet rs = stmt.executeQuery(sql);
-			
+
 			// Extract data from result set
 			while (rs.next()){
 				int id = rs.getInt("user_id");
@@ -179,7 +177,7 @@ public class User implements DBModel {
 				String userPassword = rs.getString("user_password");
 				user = new User(id, userAddress, userPassword);
 			}
-			
+
 			// clean up connection
 			rs.close();
 			stmt.close();
@@ -205,17 +203,17 @@ public class User implements DBModel {
 		}
 		return user;
 	}
-	
 
-	
-	// Generates a salt and saves it 
+
+
+	// Generates a salt and saves it
 	private void setSalt() throws NoSuchAlgorithmException{
 		SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
 		byte[] salt = new byte[16];
 		sr.nextBytes(salt);
 		userSalt = new BigInteger(salt).toString();
 	}
-	
+
 	// hashes the current password
 	private void hashPassword(){
 		String generatedPassword = null;
@@ -233,7 +231,7 @@ public class User implements DBModel {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static String hashPassword(String passwordToHash, byte[] salt){
 		String generatedPassword = null;
 		try{
@@ -250,7 +248,7 @@ public class User implements DBModel {
 		}
 		return generatedPassword;
 	}
-	
+
 	private static byte[] getStoredSalt(String username) {
 		String query = "SELECT user_salt FROM user WHERE user_address=?;";
 		Connection conn = null;
@@ -259,7 +257,7 @@ public class User implements DBModel {
 			conn = DBCon.getRemoteConnection();
 			stmt = conn.prepareStatement(query);
 			stmt.setString(1, username);
-			
+
 			ResultSet r = stmt.executeQuery();
 			String bytestring = "";
 			if (r.next()) bytestring = r.getString("user_salt");
@@ -270,7 +268,7 @@ public class User implements DBModel {
 			return null;
 		}
 	}
-	
+
 	public static boolean authenticate(String username, String password) {
 		byte[] salt = getStoredSalt(username);
 		if (salt == null) {
@@ -285,7 +283,7 @@ public class User implements DBModel {
 			return false;
 		}
 	}
-	
+
 	public static int getUserIDFromDB(String username) {
 		String query = "SELECT user_id FROM user WHERE user_address=?;";
 		Connection conn = null;
@@ -294,7 +292,7 @@ public class User implements DBModel {
 			conn = DBCon.getRemoteConnection();
 			stmt = conn.prepareStatement(query);
 			stmt.setString(1, username);
-			
+
 			ResultSet r = stmt.executeQuery();
 			int id = 0;
 			if (r.next()) id = r.getInt("user_id");
@@ -309,7 +307,7 @@ public class User implements DBModel {
 	public UserStruct toUserStruct(){
 		return SecMailServer.makeUser(userAddress + "@" + SecMailServer.getGlobalConfig().getDomain());
 	}
-	
+
 //	public static void main(String[] args) {
 //		User u = new User("test2","test");
 //		u.dbWrite();

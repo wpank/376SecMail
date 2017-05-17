@@ -1,10 +1,3 @@
-/*
- * Copyright 2016. DePaul University. All rights reserved. 
- * This work is distributed pursuant to the Software License
- * for Community Contribution of Academic Work, dated Oct. 1, 2016.
- * For terms and conditions, please see the license file, which is
- * included in this distribution.
- */
 package edu.depaul.secmail;
 
 import java.util.LinkedList;
@@ -34,8 +27,7 @@ public class ClientHandler implements Runnable{
 	private DHEncryptionIO io = null;
 	UserStruct user = null;
 	Config config = null;
-	
-	//Jacob Burkamper
+
 	ClientHandler(Socket s)
 	{
 		this.clientSocket = s;
@@ -48,25 +40,24 @@ public class ClientHandler implements Runnable{
 			Log.Error(e.toString());
 			System.exit(10);
 		}
-		
-		
+
+
 	}
-	
-	//Jacob Burkamper
+
 	public void run()
 	{
 		Log.Debug("Starting ClientHandler");
-	
+
 		try {
 			PacketHeader nextPacket = null;
-			while ((nextPacket = (PacketHeader)io.readObject()) != null) {		
-		        if (nextPacket.getCommand() == Command.CLOSE){  
+			while ((nextPacket = (PacketHeader)io.readObject()) != null) {
+		        if (nextPacket.getCommand() == Command.CLOSE){
 		        	break; // leave the loop
-		        }  
+		        }
 		        else{
 		        	processPacket(nextPacket);
 		        }
-		        	
+
 		    }
 		} catch (IOException e) {
 			Log.Error("Error while trying to read or write to socket");
@@ -76,7 +67,7 @@ public class ClientHandler implements Runnable{
 			Log.Error("Error while trying to get object from network. Class not found");
 			Log.Error(e.toString());
 		}
-		
+
 		//we're done. close the stuff
 		try {
 			Log.Debug("Closing connection to client " + clientSocket.getInetAddress() + ":" + clientSocket.getPort());
@@ -87,12 +78,12 @@ public class ClientHandler implements Runnable{
 			Log.Error(e.toString());
 		}
 	}
-	
+
 	//Collective effort from all group memebers
 	private void processPacket(PacketHeader ph)
 	{
 		Log.Debug("Processing packet for command " + ph.getCommand());
-	
+
 		switch(ph.getCommand()){
 			case CONNECT_TEST:
 				handleTestConnection();
@@ -115,16 +106,15 @@ public class ClientHandler implements Runnable{
 		default:
 			break;
 		}
-	
+
 	}
-	
-	//Jacob Burkamper
+
 	private void handleTestConnection()
 	{
 		//create successful connection packet
 		PacketHeader successfulTestPacket = new PacketHeader();
 		successfulTestPacket.setCommand(Command.CONNECT_SUCCESS);
-		
+
 		try {
 			io.writeObject(successfulTestPacket);
 		} catch (Exception e)
@@ -132,16 +122,16 @@ public class ClientHandler implements Runnable{
 			Log.Error("Exception thrown." + e);
 		}
 	}
-	
-	//Jacob Burkamper
+
+
 	private void handleLogin(){
 		try {
 			String username = (String)io.readObject();
 			String password = (String)io.readObject();
-			
-                       	
+
+
 			//authenticate
-			if (User.authenticate(username,password)) 
+			if (User.authenticate(username,password))
 			{
 				io.writeObject(new PacketHeader(Command.LOGIN_SUCCESS));
 				user = new UserStruct(username, SecMailServer.getGlobalConfig().getDomain(), SecMailServer.getGlobalConfig().getPort());
@@ -156,43 +146,41 @@ public class ClientHandler implements Runnable{
 		{
 			Log.Error("IO Exception while trying to handle login");
 			Log.Error(e.toString());
-			
+
 		} catch (ClassNotFoundException e)
 		{
 			Log.Error("Error while trying to get object from network. Class not found");
 			Log.Error(e.toString());
 		}
 	}
-	
-	// Josh Clark
+
 	private void handleEmail(){
 		//die early if the user hasn't authenticated.
 		if (user == null)
 			return;
-		
+
 		//Read Email from input stream
 		try {
 			EmailStruct newEmail = (EmailStruct)io.readObject();
-			
+
 			LinkedList<Notification> newNotificationList = newEmail.getNotificationList(user);
-			
+
 			//spawn a new thread to handle sending out the notifications here
 			(new Thread(new NotificationSender(newNotificationList))).start();
-			
-			receiveAttachments(newEmail);		
-			storeEmail(newEmail);			
-			
+
+			receiveAttachments(newEmail);
+			storeEmail(newEmail);
+
 			PacketHeader successfulEmailPacket = new PacketHeader();
 			successfulEmailPacket.setCommand(Command.CONNECT_SUCCESS);
 			io.writeObject(successfulEmailPacket);
-		
+
 		} catch (ClassNotFoundException | IOException e) {
 			Log.Error("Error thrown while trying to read User from client");
 			e.printStackTrace();
 		}
 	}
-	
-	//Jacob Burkamper
+
 	//receives the attachments associated with email from the client
 	private void receiveAttachments(EmailStruct email)
 	{
@@ -200,7 +188,7 @@ public class ClientHandler implements Runnable{
 			PacketHeader hasAttachmentHeader = (PacketHeader)io.readObject();
 			if (hasAttachmentHeader.getCommand() == Command.END_EMAIL)
 				return; // no attachments, nothing to do.
-			
+
 			//handle the attachments
 			for (
 					PacketHeader header = (PacketHeader)io.readObject();
@@ -210,13 +198,13 @@ public class ClientHandler implements Runnable{
 			{
 				if (header.getCommand() != Command.SEND_ATTACHMENT)
 					Log.Error("Protocol Error! Next header was not attachment send");
-				
+
 				//create a temporary file
 				String tmpPath = SecMailServer.getGlobalConfig().getMailRoot() + user.getUser() + "/"
 						+email.getID() + ".tmp-attach";
 				File tmp = new File(tmpPath);
 				FileOutputStream fos = new FileOutputStream(tmp);
-				
+
 				//for every array we are expecting
 				for (int i = 0; i < header.getLength(); i++)
 				{
@@ -227,7 +215,7 @@ public class ClientHandler implements Runnable{
 				//move the now-complete file from temp to its final location
 				Path finalPath = Paths.get(SecMailServer.getGlobalConfig().getUserDirectory(user.getUser()) + email.getID() + "." + header.getString());
 				Files.move(tmp.toPath(), finalPath, StandardCopyOption.ATOMIC_MOVE);
-				
+
 				//add the retrieved file to the email
 				File finalFile = finalPath.toFile();
 				email.addAttachment(finalFile);
@@ -241,13 +229,12 @@ public class ClientHandler implements Runnable{
 			Log.Error(e.toString());
 		}
 	}
-	
-	//Clayton Newmiller
+
 	private void handleGetNotification()
 	{
 		LinkedList<Notification> notifications = SecMailServer.getNotificationList(this.user);
-	
-		
+
+
 		try {
 
 			if(notifications.isEmpty()){
@@ -258,20 +245,18 @@ public class ClientHandler implements Runnable{
 				this.io.writeObject(new PacketHeader(Command.NO_NOTIFICATIONS));
 				this.io.writeObject(notifications);
 			}
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		//send all the notifications in the above linked list to the client.
 	}
-	
-	//Jacob Burkamper
+
 	private String getIdentifier()
 	{
 		return clientSocket.getInetAddress() + ":" + clientSocket.getPort();
 	}
-	
-	//Robert Alianello
+
 	private void storeEmail(EmailStruct email) throws IOException
 	{
 		Message dbEmail;
@@ -287,8 +272,7 @@ public class ClientHandler implements Runnable{
 
 		return;
 	}
-	
-	//Jacob Burkamper
+
 	private void handleNewNotificationSent() {
 		try {
 			Notification recievedNotification = (Notification)io.readObject();
@@ -301,13 +285,12 @@ public class ClientHandler implements Runnable{
 			Log.Error(e.toString());
 		}
 	}
-	 
-	// Robert Alianello
+
 	private void retrieveEmail(String id, UserStruct fromUser)
 	{
 		if(user == null) return;
 		else{
-			
+
 			//get the message from db
 			Message msg = Message.getMessageByID(id);
 			try {
@@ -325,13 +308,12 @@ public class ClientHandler implements Runnable{
 					io.writeObject(noEmail);
 				}
 			}
-			catch (IOException e) {}			
+			catch (IOException e) {}
 		}
 	}
-	
-	// Josh Clark
+
 	private String getNotificationID(){
-		
+
 		// read in the id sent over from client
 		try {
 			String id = (String)io.readObject();
@@ -343,12 +325,11 @@ public class ClientHandler implements Runnable{
 			Log.Error("IOException thrown while trying to read Email ID from client");
 			e.printStackTrace();
 		}
-		return null;	
+		return null;
 	}
-	
-	// Josh Clark
+
 	private UserStruct getFromUser(){
-		
+
 		// read in the id sent over from client
 		try {
 			UserStruct fromUser = (UserStruct)io.readObject();
@@ -360,7 +341,7 @@ public class ClientHandler implements Runnable{
 			Log.Error("IOException thrown while trying to read User from client");
 			e.printStackTrace();
 		}
-		return null;	
+		return null;
 	}
-	
+
 }

@@ -1,6 +1,6 @@
 client capabilities:
 	write mail
-	designate server (url and port number?)
+	designate server (url and port number)
 		in Config object
 	push mail to server
 	receive notifications from server on login (and while running)
@@ -20,13 +20,12 @@ server capabilities:
 encryption:
 	email/file encryption: block encryption with aes
 	non repudiation question
-	public key encryption?
+	public key encryption
 		auto-DHKE between client 2 and server 1
 authentication
-	
+
 protocols
-	
+
 streams
 
 synchronization
-

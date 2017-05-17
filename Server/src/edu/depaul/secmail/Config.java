@@ -1,10 +1,3 @@
-/*
- * Copyright 2016. DePaul University. All rights reserved. 
- * This work is distributed pursuant to the Software License
- * for Community Contribution of Academic Work, dated Oct. 1, 2016.
- * For terms and conditions, please see the license file, which is
- * included in this distribution.
- */
 package edu.depaul.secmail;
 
 import java.io.File;
@@ -22,9 +15,9 @@ public class Config {
 	private File logFile = null;
 	private String mailDir = "./mail/";
 	private String domain = "localhost";
-	
-	//Jacob Burkamper
-	Config(String[] args) 
+
+
+	Config(String[] args)
 	{
 		//iterate through each of the arguments
 		for (int i = 0; i < args.length; i++)
@@ -57,45 +50,38 @@ public class Config {
 		}
 		Log.Debug("finished constructing Config object");
 	}
-	
-	//Jacob Burkamper
+
 	public File getLogFile()
 	{
 		return this.logFile;
 	}
-	
-	//Jacob Burkamper
+
 	public String getConfigFilePath()
 	{
 		return this.configFilePath;
 	}
-	
-	//Jacob Burkamper
+
 	public int getBacklog()
 	{
 		return backlog;
 	}
-	
-	//Jacob Burkamper
+
 	public int getPort()
 	{
 		return this.port;
 	}
-	
-	//Jacob Burkamper
+
 	public String getMailRoot()
 	{
 		return mailDir;
 	}
-	
-	//Jacob Burkamper
+
 	//Get the directory for the user on this server
 	public String getUserDirectory(String user)
 	{
 		return mailDir + user + "/";
 	}
-	
-	//Jacob Burkamper
+
 	private void LoadConfigFile(String path)
 	{
 		Log.Out("Loading config file from \"" + path + "\"");
@@ -104,20 +90,19 @@ public class Config {
 		} catch (IOException e) {
 			System.err.println("Error reading config file \"" + path +"\"");
 			System.err.println(e);
-			
+
 			//reset the config file path vars
 			configFilePath = null;
 			configFile = null;
 		}
 	}
-	
-	//Jacob Burkamper
+
 	private void ReadConfigFile(String path) throws IOException
 	{
 		configFilePath = path;
 		configFile = new File(path);
 		BufferedReader inStream = null;
-		
+
 		try {
 			inStream = new BufferedReader(new FileReader(configFile));
 			String line;
@@ -126,9 +111,9 @@ public class Config {
 				//skip comments
 				if (line.startsWith("#"))
 					continue;
-				
+
 				String[] parts = line.split("=");
-				
+
 				switch(parts[0])
 				{
 				case "LogFile":
@@ -146,12 +131,11 @@ public class Config {
 				inStream.close();
 		}
 	}
-	
-	//Jacob Burkamper
+
 	private void SetLogFile(String newLogFilePath)
 	{
 		Log.Debug("Setting Log File path to + \"" + newLogFilePath + "\"");
-		
+
 		//get the file handle
 		File file = new File(newLogFilePath);
 		try {
@@ -170,16 +154,14 @@ public class Config {
 			System.err.println("Error trying to create log file");
 			System.exit(21);
 		}
-		
+
 	}
-	
-	//Jacob Burkamper
+
 	private void setDomain(String newDomain)
-	{ 
+	{
 		this.domain = newDomain;
 	}
-	
-	//Jacob Burkamper
+
 	public String getDomain()
 	{
 		return this.domain;
