@@ -1,10 +1,4 @@
-/*
- * Copyright 2016. DePaul University. All rights reserved. 
- * This work is distributed pursuant to the Software License
- * for Community Contribution of Academic Work, dated Oct. 1, 2016.
- * For terms and conditions, please see the license file, which is
- * included in this distribution.
- */
+
 
 package edu.depaul.secmail;
 
@@ -37,7 +31,6 @@ public class ConnectionTestWindow extends Shell {
 	 * Launch the application.
 	 * @param args
 	 */
-	//Jacob Burkamper
 	public static void main(String args[]) {
 		try {
 			Display display = Display.getDefault();
@@ -58,26 +51,25 @@ public class ConnectionTestWindow extends Shell {
 	 * Create the shell.
 	 * @param display
 	 */
-	//Jacob Burkamper
 	public ConnectionTestWindow(Display display) {
 		super(display, SWT.SHELL_TRIM);
 		setLayout(new GridLayout(3, false));
-		
+
 		Label lblLblserver = new Label(this, SWT.NONE);
 		lblLblserver.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblLblserver.setText("Server:");
-		
+
 		txtServer = new Text(this, SWT.BORDER);
 		txtServer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
-		
+
 		Label lblResult = new Label(this, SWT.NONE);
 		lblResult.setText("Result:");
 		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
-		
+
 		txtResult = new Text(this, SWT.BORDER);
 		txtResult.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
-		
+
 		Button btnConnect = new Button(this, SWT.NONE);
 		btnConnect.addMouseListener(new MouseAdapter() {
 			@Override
@@ -89,7 +81,7 @@ public class ConnectionTestWindow extends Shell {
 		btnConnect.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		btnConnect.setText("Connect");
 		new Label(this, SWT.NONE);
-		
+
 		Button btnClose = new Button(this, SWT.NONE);
 		btnClose.addMouseListener(new MouseAdapter() {
 			@Override
@@ -105,7 +97,6 @@ public class ConnectionTestWindow extends Shell {
 	/**
 	 * Create contents of the shell.
 	 */
-	//Jacob Burkamper
 	protected void createContents() {
 		setText("Test SecMail Connection");
 		setSize(316, 300);
@@ -117,7 +108,6 @@ public class ConnectionTestWindow extends Shell {
 		// Disable the check that prevents subclassing of SWT components
 	}
 	
-	//Jacob Burkamper
 	//Attempt to connect to a server and send a CONNECTION_TEST command
 	private String testConnection()
 	{
@@ -127,22 +117,22 @@ public class ConnectionTestWindow extends Shell {
 		{
 			return "Invalid Server format. Please use format <server>:<port>\n";
 		}
-		
+
 		try {
 			Socket s = new Socket(server[0], Integer.valueOf(server[1]));
-			
+
 			DHEncryptionIO io = new DHEncryptionIO(s, false);
-			
+
 			//create the appropriate packet
 			PacketHeader testPacketHeader = new PacketHeader();
 			testPacketHeader.setCommand(Command.CONNECT_TEST);
-			
+
 			//send the packet
 			io.writeObject(testPacketHeader);
-			
+
 			//get the response
 			PacketHeader responsePacket = (PacketHeader)io.readObject();
-			
+
 			if (responsePacket.getCommand() != Command.CONNECT_SUCCESS)
 				returnString = "Response Packet contained non-success command";
 			else
@@ -150,9 +140,9 @@ public class ConnectionTestWindow extends Shell {
 						+ "Recieved valid Success packet\n"
 						+ "Connection test successful!\n"
 						+ "Connection closing...";
-			
+
 			io.writeObject(new PacketHeader(Command.CLOSE));
-			
+
 			io.close();
 			s.close();
 		} catch (Exception e)
