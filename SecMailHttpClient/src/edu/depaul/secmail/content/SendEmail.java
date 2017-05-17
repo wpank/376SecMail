@@ -7,13 +7,14 @@ import java.io.IOException;
 
 import edu.depaul.secmail.MailServerConnection;
 import edu.depaul.secmail.ResponseContent;
-//Evan Schirle
+
+
 public class SendEmail extends ResponseContent {
 	public SendEmail(MailServerConnection c) {
 		super(true, c);
 		setContent(loadForm());
 	}
-	
+
 	private String loadForm() {
 		StringBuilder res = new StringBuilder();
 		String s;
@@ -22,7 +23,7 @@ public class SendEmail extends ResponseContent {
 			while ((s = r.readLine()) != null) res.append(s);
 			r.close();
 			return res.toString();
-		} 
+		}
 		catch (IOException e) {
 			e.printStackTrace();
 			return "Error";

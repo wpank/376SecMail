@@ -15,13 +15,13 @@ import edu.depaul.secmail.PacketHeader;
 import edu.depaul.secmail.ResponseContent;
 
 public class ReadEmail extends ResponseContent {
-		
+
 	private String ID;
 	private String sender;
 	private String date;
 	private String pass;
-	
-	//Evan Schirle
+
+
 	public ReadEmail(MailServerConnection c, HttpHandler handler) {
 		super(true, c);
 		requestHeaders = handler.getRequestHeaders();
@@ -50,8 +50,7 @@ public class ReadEmail extends ResponseContent {
 		}
 		else showEmail(mainConnection.getFromCache(ID));
 	}
-	
-	//Robert Alianello
+
 	private void showEmail(EmailStruct e) {
 		this.mainConnection.addToMailCache(ID, e); //add to cache so we don't have to go back to server for decrypt attempt, and so viewing is faster
 		if (!e.isEncrypted()) show(e);
@@ -67,7 +66,7 @@ public class ReadEmail extends ResponseContent {
 					String prompt = res.toString();
 					prompt = prompt.replaceAll("<~~!!@@fields@@!!~~>", makeFields()); //add previous fields back to request
 					setContent(prompt);
-				} 
+				}
 				catch (IOException eio) {
 					setContent("Error");
 				}
@@ -75,24 +74,24 @@ public class ReadEmail extends ResponseContent {
 			else if (attemptDecrypt(e)) show(e);
 			else setContent("Email password was incorrect");
 		}
-		
+
 	}
-	
+
 	public String makeFields() {
 		String result = "<input type='hidden' id='notificationid' name='notificationid' value='" + ID + "'/>";
 		result += "<input type='hidden' id='emailfrom' name='emailfrom' value='" + sender + "'/>";
 		result += "<input type='hidden' id='emaildate' name='emaildate' value='" + date + "'/>";
 		return result;
 	}
-	
+
 	private boolean attemptDecrypt(EmailStruct e) {
 		return e.decrypt(pass);
 	}
-	
+
 	private void show(EmailStruct e) {
 		setContent("<b>Message sent by " + sender +" on " + date);
 		addContent("<br>Subject: " + e.getSubject() + "<br>");
 		addContent("Message: </b><br>" + e.getBody());
 	}
-	
+
 }

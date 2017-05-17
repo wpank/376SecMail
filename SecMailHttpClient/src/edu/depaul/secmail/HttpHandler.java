@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 import edu.depaul.secmail.content.*;
 
-//Robert Alianello
+
 public class HttpHandler implements Runnable {
 	private String responseHeaders = "HTTP/1.1 200 OK\r\n"
 			+ "Server: SecMail HTTP Server 1.0\r\n"
@@ -30,7 +30,8 @@ public class HttpHandler implements Runnable {
 	private String user = null;
 	private RequestType method;
 	private boolean isText = true;
-	//Robert Alianello
+
+
 	public enum RequestType {
 		GET,
 		POST,
@@ -42,12 +43,12 @@ public class HttpHandler implements Runnable {
 		CONNECT,
 		INVALID;
 	}
-	
+
 	public HttpHandler(Socket s) {
 		this.clientSock = s;
 	}
-	
-	//Robert Alianello
+
+
 	public void setResponseHeaders(String length) {
 		//add to response headers when request is for text
 		SimpleDateFormat d = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss zzz");
@@ -56,7 +57,8 @@ public class HttpHandler implements Runnable {
 		addToResponse("Last-Modified: " + date);
 		addToResponse("Content-Length: " + length);
 	}
-	//Robert Alianello
+
+
 	public void setResponseHeaders() {
 		//add to response headers when request is not for text
 		SimpleDateFormat d = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss zzz");
@@ -64,7 +66,8 @@ public class HttpHandler implements Runnable {
 		addToResponse("Date: " + date);
 		addToResponse("Last-Modified: " + date);
 	}
-	//Robert Alianello
+
+
 	public RequestType setRequestType(String t) {
 		if (t.equals("GET")) return RequestType.GET;
 		else if (t.equals("POST")) return RequestType.POST;
@@ -72,7 +75,8 @@ public class HttpHandler implements Runnable {
 		else if (t.equals("DELETE")) return RequestType.DELETE;
 		else return RequestType.INVALID;
 	}
-	//Robert Alianello
+
+
 	public void run() {
 		try {
 			in = clientSock.getInputStream();
@@ -85,11 +89,11 @@ public class HttpHandler implements Runnable {
 			this.method = setRequestType(req[0]);
 			String[] reqLocation = req[1].split("\\?");
 			String path = reqLocation[0];
-			
+
 			requestHeaders = parseHeaders(b);
 			//check if params added to request in URL and add to headers hashmap
-			if (reqLocation.length > 1) addGetParams(requestHeaders, reqLocation); 
-			
+			if (reqLocation.length > 1) addGetParams(requestHeaders, reqLocation);
+
 			//if session is set, create new UserStruct and set to user
 			String sessionID = checkSession(requestHeaders);
 			if (HttpSession.isSet(sessionID)) {
@@ -108,10 +112,10 @@ public class HttpHandler implements Runnable {
 				this.closeAll();
 				return;
 			}
-			
-			
+
+
 			String responseBody = ""; //body that will be sent to client
-			
+
 			String acceptField = requestHeaders.get("Accept");
 			//handle different request methods
 			if (method == RequestType.GET) {
@@ -163,24 +167,25 @@ public class HttpHandler implements Runnable {
 				addToResponse("Content-Type: text/html");
 			}
 			else setResponseHeaders();
-			
+
 			//output response if the request was for text. Combine response headers with response content and send the bytes to the browser
 			if (this.isText) out.write((responseHeaders + "\r\n" + responseBody).getBytes());
 
-		} 
+		}
 		catch (IOException e) {
 			System.out.println("IOException....");
 		}
 		try {
 			clientSock.close();
-		} 
+		}
 		catch (IOException e) {
 			System.out.println("IOException.... from thingy");
 		}
 
-		
+
 	}
-	//Robert Alianello
+
+
 	public HashMap<String, String> parseHeaders(BufferedReader b) {
 		String s;
 		HashMap<String, String> parsed = new HashMap<String, String>();
@@ -201,17 +206,18 @@ public class HttpHandler implements Runnable {
 				}
 				String vars = new String(v);
 				String[] varArray = vars.split("&");
-				
+
 				for (int i = 0; i < varArray.length; i++) {
 					String[] t = varArray[i].split("=");
 					if (t.length > 1) parsed.put(t[0], t[1]);
 				}
 			}
-		} 
+		}
 		catch (IOException e) { }//TO DO -- figure out what to do here
 		return parsed;
 	}
-	//Robert Alianello
+
+
 	private String checkSession(HashMap<String, String> requestHeaders) {
 		//check if session is active
 		String cookie;
@@ -222,18 +228,21 @@ public class HttpHandler implements Runnable {
 		}
 		return null;
 	}
-	//Robert Alianello
+
+
 	public void startSession(String username, Socket s, DHEncryptionIO io) {
 		String sessionID = HttpSession.start(username, s, io);
 		addToResponse("Set-Cookie: SECMAILSESSIONID=" + sessionID);
-		
+
 	}
-	//Robert Alianello
+
+
 	public void addToResponse(String s) {
 		//add field to response header
 		this.responseHeaders = this.responseHeaders + s + "\r\n";
 	}
-	//Robert Alianello
+
+
 	private String handleGetRequest(String path) {
 		if (path.equals("/")) return setResponseBody(new Home(this.mainConnection));
 		else if (path.equals("/whoami")) return setResponseBody(new LoggedInAs(this.mainConnection));
@@ -243,14 +252,16 @@ public class HttpHandler implements Runnable {
 		else if (path.contains(".js") || path.contains(".css")) return handleScript(path);
 		else return Main.serveBadRequest();
 	}
-	//Robert Alianello
+
+
 	private String handlePostRequest(String path) {
 		if (path.equals("/signin")) return setResponseBody(new SignIn(this.mainConnection, this));
 		if (path.equals("/readmail")) return setResponseBody(new ReadEmail(this.mainConnection, this));
 		if (path.equals("/sendmail")) return setResponseBody(new ProcessEmail(this.mainConnection, this));
 		else return Main.serveBadRequest();
 	}
-	//Robert Alianello
+
+
 	private byte[] handleFileRequest(String path) {
 		byte[] bytes;
 		try {
@@ -260,12 +271,13 @@ public class HttpHandler implements Runnable {
 			reader.read(bytes);
 			reader.close();
 			return bytes;
-		} 
+		}
 		catch (IOException e) {System.out.println("bad file");}//TO DO -- do something better here
 		return null;
-		
+
 	}
-	//Robert Alianello
+
+
 	private String handleScript(String path) {
 		StringBuilder script = new StringBuilder();
 		try {
@@ -280,7 +292,8 @@ public class HttpHandler implements Runnable {
 		catch (IOException e) {}
 		return script.toString();
 	}
-	//Robert Alianello
+
+
 	public boolean handleLogin(String username, String password) {
 		try {
 			Socket s = new Socket(Main.host, Main.port);
@@ -306,7 +319,8 @@ public class HttpHandler implements Runnable {
 		catch (ClassNotFoundException e) { return false; }
 
 	}
-	//Robert Alianello
+
+
 	private void addGetParams(HashMap<String, String> rHeaders, String[] loc) {
 		String[] params = loc[1].split("&");
 		for (int i = 0; i < params.length; i++) {
@@ -314,7 +328,8 @@ public class HttpHandler implements Runnable {
 			if (p.length == 2) rHeaders.put(p[0], p[1]);
 		}
 	}
-	//Robert Alianello
+
+
 	private String setResponseBody(Content c) {
 		//returns a string representing the Content object c
 		ArrayList<String> headers;
@@ -323,11 +338,12 @@ public class HttpHandler implements Runnable {
 		}
 		return c.display();
 	}
-	
+
 	public HashMap<String, String> getRequestHeaders() {
 		return this.requestHeaders;
 	}
-	//Robert Alianello
+
+
 	private void closeAll() {
 		try {
 			this.clientSock.close();
@@ -336,6 +352,6 @@ public class HttpHandler implements Runnable {
 			this.mainConnection = null;
 		} catch (IOException e) { System.out.println("error while closing connection"); }
 	}
-	
+
 
 }

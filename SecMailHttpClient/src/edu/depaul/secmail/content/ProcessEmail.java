@@ -12,12 +12,11 @@ import edu.depaul.secmail.Main;
 import edu.depaul.secmail.PacketHeader;
 import edu.depaul.secmail.ResponseContent;
 
-//Evan Schirle
 public class ProcessEmail extends ResponseContent {
 	private String to;
 	private String subject;
 	private String message;
-	
+
 	public ProcessEmail(MailServerConnection c, HttpHandler h) {
 		super(true, c);
 		this.requestHeaders = h.getRequestHeaders();
@@ -30,7 +29,7 @@ public class ProcessEmail extends ResponseContent {
 		}
 		else setContent("There was en error sending your email");
 	}
-	
+
 	private boolean send() {
 		try {
 			to = URLDecoder.decode(to, "UTF-8");
@@ -48,33 +47,33 @@ public class ProcessEmail extends ResponseContent {
 		EmailStruct e = Main.makeEmail();
 		if (mult) {
 			for (String s : recps) e.addRecipient(s);
-		}else 
+		}else
 			e.addRecipient(to);
 		e.setSubject(subject);
 		e.setBody(message);
-		
+
 		String enc;
 		String encPass;
 		if ((enc = requestHeaders.get("emailencrypted")) != null) {
 			encPass = requestHeaders.get("emailpassword");
 			try {
 				encPass = URLDecoder.decode(encPass, "UTF-8");
-			} 
+			}
 			catch (UnsupportedEncodingException e1) {
 				e1.printStackTrace();
 			}
 			e.encrypt(encPass);
 		}
-		
+
 		PacketHeader emailPacket = Main.makePH(Command.SEND_EMAIL);
 		try {
 			mainConnection.secIO.writeObject(emailPacket);
 			mainConnection.secIO.writeObject(e);
 			mainConnection.secIO.writeObject(Main.makePH(Command.END_EMAIL));
 			PacketHeader response = (PacketHeader)mainConnection.secIO.readObject();
-			if (response.getCommand() == Command.CONNECT_SUCCESS) 
+			if (response.getCommand() == Command.CONNECT_SUCCESS)
 				return true;
-			else 
+			else
 				return false;
 		} catch (IOException | ClassNotFoundException e1) {
 			return false;

@@ -10,7 +10,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * Time-based two factor authentication algorithm. 
+ * Time-based two factor authentication algorithm.
  *
  * Use generateBase32Secret() to generate a secret key for a user.
  * Store the secret key in the database associated with the user account.
@@ -26,14 +26,14 @@ import javax.crypto.spec.SecretKeySpec;
  *
  */
 public class TwoFactorAuthentication {
-	//Rohail Baig
+
     //30 second wait time to enter authentication
     public static final int DEFAULT_TIME_STEP_SECONDS = 30;
     //two-factor authentication code cannot exceed 6 digits.
     private static int NUM_DIGITS_OUTPUT = 6;
-    
+
     private static final String blockOfZeros;
-    
+
     static {
         char[] chars = new char[NUM_DIGITS_OUTPUT];
         for (int i = 0; i < chars.length; i++) {
@@ -41,11 +41,11 @@ public class TwoFactorAuthentication {
         }
         blockOfZeros = new String(chars);
     }
-    
-    
+
+
 //     Generate and return a secret key in base32 format (A-Z2-7). Could be used to generate
 //     the QR image to be shared with the user.
-     //Rohail Baig
+
     public static String generateBase32Secret() {
         StringBuilder sb = new StringBuilder();
         Random random = new SecureRandom();
@@ -59,12 +59,12 @@ public class TwoFactorAuthentication {
         }
         return sb.toString();
     }
-    
+
     /**
      * Return the current number to be checked. This can be compared against user input.
      *
-     * 
-     * 
+     *
+     *
      * For more details of this algorithm, see:
      * http://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm
      *
@@ -73,30 +73,30 @@ public class TwoFactorAuthentication {
     public static String generateCurrentNumber(String secret) throws GeneralSecurityException {
         return generateCurrentNumber(secret, System.currentTimeMillis(), DEFAULT_TIME_STEP_SECONDS);
     }
-    
-    //Rohail Baig
+
+
     public static String generateCurrentNumber(String secret, long currentTimeMillis, int timeStepSeconds)
     throws GeneralSecurityException {
-        
+
         byte[] key = decodeBase32(secret);
-        
+
         byte[] data = new byte[8];
         long value = currentTimeMillis / 1000 / timeStepSeconds;
         for (int i = 7; value > 0; i--) {
             data[i] = (byte) (value & 0xFF);
             value >>= 8;
         }
-        
+
         // encrypt the data with the key and return the SHA1 of it in hex
         SecretKeySpec signKey = new SecretKeySpec(key, "HmacSHA1");
         Mac mac = Mac.getInstance("HmacSHA1");
         mac.init(signKey);
         byte[] hash = mac.doFinal(data);
-        
+
         // take the 4 least significant bits from the encrypted string as an offset
         int offset = hash[hash.length - 1] & 0xF;
-        
-        // Using a long because Java does not support unsigned bits. 
+
+        // Using a long because Java does not support unsigned bits.
         long truncatedHash = 0;
         for (int i = offset; i < offset + 4; ++i) {
             truncatedHash <<= 8;
@@ -105,20 +105,20 @@ public class TwoFactorAuthentication {
         }
         // cut off the top bit
         truncatedHash &= 0x7FFFFFFF;
-        
+
         // the token is then the last 6 digits in the number
         truncatedHash %= 1000000;
-        
+
         return zeroPrepend(truncatedHash, NUM_DIGITS_OUTPUT);
     }
-    
+
     /**
      * Return the QR image url using Google. This can be shown to the user and scanned by the authenticator program
      * as an easy way to enter the secret.
      *
      */
-    
-    //Rohail Baig
+
+
     public static String qrImageUrl(String keyId, String secret) {
         StringBuilder sb = new StringBuilder(128);
         sb.append("https://chart.googleapis.com/chart");
@@ -126,10 +126,9 @@ public class TwoFactorAuthentication {
         sb.append("otpauth://totp/").append(keyId).append("%3Fsecret%3D").append(secret);
         return sb.toString();
     }
-    
-    
+
+
     // Return the string prepended with 0s.
-    //Rohail Baig
     static String zeroPrepend(long num, int digits) {
         String numStr = Long.toString(num);
         if (numStr.length() >= digits) {
@@ -142,9 +141,9 @@ public class TwoFactorAuthentication {
             return sb.toString();
         }
     }
-    
+
+
     //Decode 32-Base Method.
-    //Rohail Baig
     static byte[] decodeBase32(String str) {
         // each base-32 character encodes 5 bits
         int numBytes = ((str.length() * 5) + 4) / 8;
@@ -168,7 +167,7 @@ public class TwoFactorAuthentication {
             } else {
                 throw new IllegalArgumentException("Invalid base-32 character: " + ch);
             }
-            
+
             switch (which) {
                 case 0:
                     // all 5 bits is top 5 bits
@@ -233,13 +232,14 @@ public class TwoFactorAuthentication {
         }
         return result;
     }
-    //Rohail Baig
-    //Testing the encoded outome of the return value that transmit to Authenticator application. 
+
+
+    //Testing the encoded outome of the return value that transmit to Authenticator application.
     public static void main (String [] Args) {
     //	TwoFactorAuthentication  zero = zeroPrepend(num, digits);
-    	
+
     	byte[] result = decodeBase32("helkop");
     	System.out.println(result);
-    	
+
     }
 }
