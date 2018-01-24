@@ -1,4 +1,4 @@
-# SecMail
+# Crypto Mail
 
 
 ## HTTP Proxy (Client) features:
@@ -13,10 +13,6 @@
 ## Server Changes:
 - Database Implemented - All data (Users, Notifications, Emails) is now stored in a MySQL database, rather than saved within files
 - Authentication optimized - better password hashing
-
-## GUI Client mods:
-- re-wrote missing methods
-- Fixed email decryption
 
 ## Other Details:
 - HTTP Proxy - Received emails that are opened by a user are cached for the duration of the users session, allowing instant re-opening and no delay when decrypting message. Also lightens DB load
